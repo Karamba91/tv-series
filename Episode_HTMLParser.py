@@ -15,4 +15,5 @@ class Episode_HTMLParser(HTMLParser):
             self.recording = 0
 
     def handle_data(self, data):
-        self.data.append(data)
+        if self.recording != 0:
+            self.data.append(data)
