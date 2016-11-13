@@ -1,6 +1,6 @@
 import datetime
 class Episode:
-    def __init__(self,n_name="",n_season=0,n_episode=0,date='2000-01-01'):
+    def __init__(self, n_name="", n_season=0, n_episode=0, date = datetime.date(2000, 01, 01)):
         self.name = n_name
         self.season = n_season
         self.episode = n_episode
@@ -15,5 +15,5 @@ class Episode:
     def get_episode(self):
         return self.episode
 
-    def get_brdcstDate(self):
-        return 
+    def get_brdcstdate(self):
+        return self.broadcast_date
