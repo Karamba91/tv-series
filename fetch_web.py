@@ -2,6 +2,6 @@
 import urllib2
 
 def fetch_html (url=""):
-    response = urllib2.urlopen('http://epguides.com/BigBangTheory/')
+    response = urllib2.urlopen(url)
     html = response.read()
     return html

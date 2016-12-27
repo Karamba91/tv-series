@@ -1,6 +1,7 @@
-import re,fetch_web,datetime,Store_json
+import re, fetch_web, datetime
 from Episode_HTMLParser import Episode_HTMLParser
 from Episode import Episode
+from FindEpisode import get_magnet
 
 def decode_html(html):
     episode_list=[]
@@ -37,11 +38,22 @@ def interpret_date(dateStr):
 
 
 # Initialization of file, clean sheet.
-f = open('data.txt','w')
+f = open('data.txt', 'w')
 f.write("")
 f.close()
 # Open file in append mode
 data_file = open('data.txt', 'a')
-list_episodes = decode_html(fetch_web.fetch_html())
-data_file.write(list_episodes)
+
+info_url = 'http://epguides.com/bigbangtheory/'
+
+list_episodes = decode_html(fetch_web.fetch_html(info_url))
+
+#print [i.get_name() for i in list_episodes]
+
+magnet_link_url = 'https://eztv.ag/search/?q1=&q2=23&search=Search' #The Big Bang Theory @ eztv
+
+#print "S" + list_episodes[-1].get_season() + 'E' + list_episodes[1].get_episode()
+
+print get_magnet(list_episodes[0], magnet_link_url)
+
 #(Store_json.store_in_file(x, data_file) for x in list_episodes)
