@@ -1,59 +1,22 @@
-import re, fetch_web, datetime
-from Episode_HTMLParser import Episode_HTMLParser
-from Episode import Episode
+import fetch_web
+from UpdateEpisodeDB import open_and_read_json_from_file, open_and_write_json_to_file,create_dict_from_list_episodes, create_download_dict
 from FindEpisode import get_magnet
-
-def decode_html(html):
-    episode_list=[]
-    parser = Episode_HTMLParser()
-    parser.feed(html)
-    for i in parser.data:
-        # Remove uneccesary information from string. Split at beginning of info at "#number dot".
-        pure = re.split("(\d+\..+)",i)
-        if len(pure) > 2:
-            finish_flag = 0
-            pure = pure[1]
-            # Identifying information from string.
-            m = re.match(
-                "(?P<total_episode>^\d+)(\.)(\s+)(?P<season>\d+)(\-)(?P<episode>\d+)(\s+)(?P<date>[\d\s\w]+)",pure)
-            episode_dict = m.groupdict()
-        elif finish_flag == 0:
-            finish_flag = 1
-            name = pure[0]
-            episode_list.append(Episode(name, episode_dict['season'], episode_dict['episode'],
-                                        interpret_date(episode_dict['date'])))
-    return episode_list
-
-def interpret_date(dateStr):
-    months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    monthDict = dict(zip(months, range(1, 13)))
-    dd = dateStr.split()
-    day = dd[0]
-    month = monthDict[dd[1]]
-    if len(dd[2]) == 2:
-        year = "20" + dd[2]
-    elif len(dd[2]) == 4:
-        year = dd[2]
-    return datetime.date(int(year), int(month), int(day))
-
-
-# Initialization of file, clean sheet.
-f = open('data.txt', 'w')
-f.write("")
-f.close()
-# Open file in append mode
-data_file = open('data.txt', 'a')
+from DecodeHTML import decode_html
 
 info_url = 'http://epguides.com/bigbangtheory/'
 
-list_episodes = decode_html(fetch_web.fetch_html(info_url))
+#list_episodes = decode_html(fetch_web.fetch_html(info_url))
+with open('thebigbangtheory.txt', 'r') as f:
+    list_episodes = decode_html(f.read())
 
-#print [i.get_name() for i in list_episodes]
+ep_dict = create_dict_from_list_episodes(list_episodes)
 
-magnet_link_url = 'https://eztv.ag/search/?q1=&q2=23&search=Search' #The Big Bang Theory @ eztv
+open_and_write_json_to_file('Data/Big Bang Theory', ep_dict)
 
-#print "S" + list_episodes[-1].get_season() + 'E' + list_episodes[1].get_episode()
+open_and_write_json_to_file('Data/Big Bang Theory DOWNLOAD', create_download_dict(ep_dict))
 
-print get_magnet(list_episodes[0], magnet_link_url)
+#magnet_link_url = 'https://eztv.ag/search/?q1=&q2=23&search=Search' #The Big Bang Theory @ eztv
+
+#print get_magnet(list_episodes[0], magnet_link_url)
 
 #(Store_json.store_in_file(x, data_file) for x in list_episodes)

@@ -1,4 +1,4 @@
-import urllib2, Episode
+import urllib2
 from bs4 import BeautifulSoup
 __author__="Erik Henriksson"
 
